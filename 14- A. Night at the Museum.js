@@ -36,8 +36,6 @@ class DoublyLinkedList {
     }
 
     getMinDist(start, dist) {
-        // const nodeStart = this.getNode(start)
-        // const nodeEnd = this.getNode(dist)
         let next = this.getThroughNext(this.getNode(start), this.getNode(dist));
         let back = this.getThroughLast(this.getNode(start), this.getNode(dist));
         return next <= back ? next : back;
@@ -83,7 +81,7 @@ for (let i = 0; i < 26; i++) {
     const char = String.fromCharCode(97 + i); // 97 is the ASCII code for 'a'
     dd.addItem(char);
 }
-let input = ""
+let input = "a"
 process.stdin.on("data", (data) => {
     if (data.toString().trim() === "end") {
         process.stdin.emit("end")
