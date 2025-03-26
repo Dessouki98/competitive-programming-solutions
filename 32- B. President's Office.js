@@ -11,7 +11,7 @@ process.stdin.on("end", () => {
     let [n, m, presdentialLetter] = inputs.split(" ").filter(x => x !== " ");
     matrix = matrix.map((row) => row.split('').filter(x => x !== "\r"));
     matrix.pop()
-    console.log(solveUsingBFS(matrix, Number(n), Number(m), presdentialLetter.trim()));
+    console.log(solveUsingDFS(matrix, Number(n), Number(m), presdentialLetter.trim()));
 })
 
 function solveUsingBFS(matrix, rows, columns, presdentialLetter) {
@@ -65,4 +65,53 @@ function solveUsingBFS(matrix, rows, columns, presdentialLetter) {
         }
     }
     return neighbors.size;
+}
+
+function solveUsingDFS(matrix, rows, columns, presdenstialLetter) {
+    const postions = {
+        left: [0, -1],
+        right: [0, 1],
+        top: [-1, 0],
+        bottom: [1, 0],
+    }
+    let startFound = false;
+    let visited = new Set();
+    let startPoint;
+    // there will be no deputies here we will always go in the depth as soon as we find One; but first lets find the
+    // starting point.
+    for (let i = 0; i < rows && !startFound; i++) {
+        for (let j = 0; j < columns && !startFound; j++) {
+            if (matrix[i][j] === presdenstialLetter) {
+                startFound = true;
+                startPoint = [i, j]
+            }
+        }
+    }
+    let deputies = new Set();
+    let is = dfs(startPoint[0], startPoint[1], postions, visited, rows, columns, matrix, presdenstialLetter, deputies);
+    return is;
+}
+
+function dfs(positionR, positionCol, movements, visited, numOfRows, numOfCols, matrix, presdentialLetter, deputies) {
+    // Base step if already in visited then reutrn.
+    if (visited.has(`${positionR},${positionCol}`)) {
+        return
+    }
+    visited.add(`${positionR},${positionCol}`);
+
+    // now we go recursive for each possible directions.
+    for (const movement of Object.entries(movements)) {
+        let posR = positionR + movement[1][0];
+        let posCol = positionCol + movement[1][1];
+        if (posR >= 0 && posR < numOfRows && !visited.has(`${posR},${posCol}`)) {
+            if (posCol >= 0 && posCol < numOfCols && !visited.has(`${posR},${posCol}`)) {
+                if (matrix[posR][posCol] === presdentialLetter) {
+                    dfs(posR, posCol, movements, visited, numOfRows, numOfCols, matrix, presdentialLetter, deputies);
+                } else if (matrix[posR][posCol] !== ".") {
+                    deputies.add(matrix[posR][posCol]);
+                }
+            }
+        }
+    }
+    return deputies.size;
 }
